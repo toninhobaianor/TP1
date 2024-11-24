@@ -68,14 +68,15 @@ int main(int argc, char **argv) {
     size_t count;
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
+    char *dir = malloc(sizeof(100));
+    char *res = malloc(sizeof(100));
+    char buf[BUFSZ];
 
-    while (1) {
-        char buf[BUFSZ];
+    while (1) {      
         memset(buf, 0, BUFSZ);
         recv(csock, buf, BUFSZ, 0);
         printf("[msg] Client connected\n");
 
-        char *res = malloc(sizeof(100));
 		for(int i = 0; i <= 4; i++){
 			res[i] = buf[i];
 		}
@@ -94,12 +95,17 @@ int main(int argc, char **argv) {
             send(csock, buf, strlen(buf) + 1, 0);
             }*/
            inicia_labiririnto(board);
-            for(int i = 0; i < 5; i++){
-                for(int j = 0; j < 5; j++){
-                    printf("%d",board[i][j]);
-                }
-                printf("\n");
-            }
+           direcoes_possiveis(board,dir);
+           sprintf(buf, "%s\n", dir);
+           send(csock, buf, strlen(buf) + 1, 0);
+           while(1){
+                recv(csock, buf, BUFSZ, 0);
+                modifica_labirinto(board,buf);
+                direcoes_possiveis(board,dir);
+                sprintf(buf, "%s\n", dir);
+                send(csock, buf, strlen(buf) + 1, 0);
+           }
+
         }
         if(strcmp(res,"exit ") == 0){
             break;
