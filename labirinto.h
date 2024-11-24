@@ -5,13 +5,9 @@
 void pega_labirinto(int *m, int *n, int M[10][10],char *nome_arquivo);
 // função para ocultar o labirinto
 // função de consulta()
-int *direções_possiveis(int M[10][10]){
-
-}
-
-void modifica_labirinto(){
-    
-}
+void inicia_labiririnto(int M[10][10]);
+int *direcoes_possiveis(int M[10][10], int *direcoes);
+void modifica_labirinto(int M[10][10],char* direcao);
 
 // Estrutura que define uma ação no labirinto (usada para sockets)
 struct action {

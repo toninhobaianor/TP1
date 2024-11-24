@@ -7,9 +7,7 @@
 void pega_labirinto(int *m, int *n, int M[10][10], char *nome_arquivo){
   FILE *arq;
   char c;     
-
   arq = fopen(nome_arquivo, "rt");
-
   if (arq == NULL) {
     printf("Problemas na abertura do arquivo\n");
     exit(EXIT_FAILURE);
@@ -23,32 +21,83 @@ void pega_labirinto(int *m, int *n, int M[10][10], char *nome_arquivo){
       *n = i;  
       break; 
     } 
-        // Se o caractere não for tabulação ('\t' = ASCII 9) ou nova linha ('\n' = ASCII 10)
-    else if (c != 9 && c != 10) {
+    // Se o caractere não for tabulação ('\t' = ASCII 9) ou nova linha ('\n' = ASCII 10)
+    else if (c != 9 && c != 10 && c != 32) {
       M[i][j] = c-48;  // Armazena o caractere na matriz
       j++;          // Avança para a próxima coluna
     } 
-        // Se o caractere for uma nova linha ('\n')
+    // Se o caractere for uma nova linha ('\n')
     else if (c == 10) {
       *m = j;  // Atualiza o número de colunas da matriz
       i++;     // Avança para a próxima linha
       j = 0;   // Reseta o índice de colunas
     }
-        // Exibe o caractere lido na tela
-    printf("%c", c);
+    // Exibe o caractere lido na tela
+    //printf("%c", c);
   }
     fclose(arq);
 }
 
+void inicia_labiririnto(int M[10][10]){
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            if((M[i][j]) == 2){
+                M[i][j] = 5;
+                break;
+            }
+        }
+    }
 
+}
+int *direcoes_possiveis(int M[10][10], int *direcoes){
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            if((M[i][j]) == 5){
+                if(M[i][j + 1] == 5){
+                    direcoes[1] = 2;
+                }
+                if(M[i + 1][j] == 5){
+                    direcoes[2] = 3;
+                }
+                if(M[i][j - 1] == 5){
+                    direcoes[3] = 4;
+                }
+                if(M[i - 1][j] == 5){
+                    direcoes[0] = 1;
+                }
+                break;
+            }
+        }
+    }
 
+    return direcoes;
+}
 
-
-
-
-
-
-
+void modifica_labirinto(int M[10][10],char* direcao){
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            if(M[i][j] == 5){
+                if(strcmp(direcao,"down")){
+                    M[i][j + 1] = 5;
+                    M[i][j] = 1;
+                }
+                if(strcmp(direcao,"right")){
+                    M[i + 1][j] = 5;
+                    M[i][j] = 1;
+                }
+                if(strcmp(direcao,"up")){
+                    M[i][j - 1] = 5;
+                    M[i][j] = 1;
+                }
+                if(strcmp(direcao,"left")){
+                    M[i - 1][j] = 5;
+                    M[i][j] = 1;
+                }
+                break;
+            }
+        }
+    }
+}
 
 
 

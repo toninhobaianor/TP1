@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
 
     char nome_arquivo[100] = "input/in.txt";
     //nome_arquivo = (char *)(&argv[4]);
-    int Colunas = 0;
-    int Linhas = 0;
+    int Colunas = 10;
+    int Linhas = 10;
     int board[10][10];
 
     int s;
@@ -93,10 +93,12 @@ int main(int argc, char **argv) {
             buf == aos moviemntos possiveis
             send(csock, buf, strlen(buf) + 1, 0);
             }*/
+           inicia_labiririnto(board);
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
                     printf("%d",board[i][j]);
                 }
+                printf("\n");
             }
         }
         if(strcmp(res,"exit ") == 0){
