@@ -4,6 +4,20 @@
 #include "../labirinto.h"
 #include <ctype.h>
 
+void remove_espacos( char * out, const char * in ){
+    const char * p = in;
+    int i = 0;
+
+    while( *p ){
+        if( !isspace(*p) ){
+          out[i++] = *p;
+        }
+        p++;
+    }
+    out[i] = 0;
+    //return out;
+}
+
 void pega_labirinto(int *m, int *n, int M[10][10], char *nome_arquivo){
   FILE *arq;
   char c;     
@@ -39,8 +53,8 @@ void pega_labirinto(int *m, int *n, int M[10][10], char *nome_arquivo){
 }
 
 void inicia_labiririnto(int M[10][10]){
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 10; j++){
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
             if((M[i][j]) == 2){
                 M[i][j] = 5;
                 break;
@@ -54,19 +68,19 @@ void direcoes_possiveis(int M[10][10], char *direcoes){
   direcoes[1] = '0';
   direcoes[2] = '0';
   direcoes[3] = '0';
-  for(int i = 0; i < 10; i++){
-    for(int j = 0; j < 10; j++){
+  for(int i = 0; i < 5; i++){
+    for(int j = 0; j < 5; j++){
       if((M[i][j]) == 5){
-        if(M[i][j + 1] == 1 ){
+        if(M[i + 1][j] == 1 ){
           direcoes[1] = '2';
         }
-        if(M[i + 1][j] == 1){
+        if(M[i][j + 1] == 1){
           direcoes[2] = '3';
         }
-        if(M[i][j - 1] == 1){
+        if(M[i - 1][j] == 1){
           direcoes[3] = '4';
         }
-        if(M[i - 1][j] == 1){
+        if(M[i][j - 1] == 1){
           direcoes[0] = '1';
         }
         break;
@@ -75,47 +89,75 @@ void direcoes_possiveis(int M[10][10], char *direcoes){
   }
 }
 
-int modifica_labirinto(int M[10][10],char* direcao){
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 10; j++){
-            if(M[i][j] == 5){
-                if(strcmp(direcao,"down")){
-                  if(M[i][j + 1] == 3){
-                    M[i][j] = 1;
-                    return 1;
-                  }
-                    M[i][j + 1] = 5;
-                    M[i][j] = 1;
-                }
-                if(strcmp(direcao,"right")){
-                    if(M[i + 1][j] == 3){
-                      M[i][j] = 1;
-                      return 1;
-                    }
-                    M[i + 1][j] = 5;
-                    M[i][j] = 1;
-                }
-                if(strcmp(direcao,"up")){
-                    if(M[i][j - 1] == 3){
-                      M[i][j] = 1;
-                      return 1;
-                    }
-                    M[i][j - 1] = 5;
-                    M[i][j] = 1;
-                }
-                if(strcmp(direcao,"left")){
-                    if(M[i - 1][j] == 3){
-                      M[i][j] = 1;
-                      return 1;
-                    }
-                    M[i - 1][j] = 5;
-                    M[i][j] = 1;
-                }
-                break;
-            }
+int modifica_labirinto(int M[10][10],char *direcao){
+  for(int i = 0; i < 5; i++){
+    for(int j = 0; j < 5; j++){
+      if(M[i][j] == 5){
+        if(strcmp(direcao,"down") == 0){            
+          if(M[i + 1][j] == 3){
+            return 1;
+          }
+          if(M[i + 1][j] == 0){
+            //printf("error: you cannot go this way");
+            return 2;
+          }
+          if(M[i + 1][j] == 1){
+            M[i + 1][j] = 5;
+            M[i][j] = 1;
+            return 0;
+          }
+                
         }
+        else if(strcmp(direcao,"right") == 0){
+          if(M[i][j + 1] == 3){
+            M[i][j] = 1;
+            return 1;
+          }
+          if(M[i][j + 1] == 0){
+            //printf("error: you cannot go this way");
+            return 2;
+          }
+          if(M[i][j + 1] == 1){
+            M[i][j + 1] = 5;
+            M[i][j] = 1;
+            return 0;
+          }
+        }
+        else if(strcmp(direcao,"up") == 0){
+          if(M[i - 1][j] == 3){
+            M[i][j] = 1;
+            return 1;
+          }
+          if(M[i - 1][j] == 0){
+            //printf("error: you cannot go this way");
+            return 2;
+          }
+          if(M[i - 1][j] == 1){
+            M[i - 1][j] = 5;
+            M[i][j] = 1;
+            return 0;
+          }
+        }
+        else if(strcmp(direcao,"left") == 0){
+          if(M[i][j - 1] == 3){
+            M[i][j] = 1;
+            return 1;
+          }
+          if(M[i][j - 1] == 0){
+            //printf("error: you cannot go this way");
+            return 2;
+          }
+          if(M[i][j - 1] == 1){
+            M[i][j - 1] = 5;
+            M[i][j] = 1;
+            return 0;
+          }
+        }
+        break;
+      }
     }
-    return 0;
+  }
+  return 0;
 }
 
 

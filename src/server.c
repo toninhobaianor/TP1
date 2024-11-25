@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     if (csock == -1) {
         logexit("accept");
     }
-    size_t count;
+    
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
     char *dir = malloc(sizeof(100));
@@ -81,44 +81,77 @@ int main(int argc, char **argv) {
 			res[i] = buf[i];
 		}
         if(strcmp(res,"start") == 0){
-            pega_labirinto(&Colunas, &Linhas, board ,nome_arquivo);
-            /*
-            função de verificar movimentos possiveis
-            buf == os moviemntos possiveis
-            send(csock, buf, strlen(buf) + 1, 0);
-            while(1){
-            recv(csock, buf, BUFSZ, 0);
-            função de andar no labiririnto
-            função de verificar moviemntos possiveis
-                a função de verificar os moviemntos vai me dizer se cheguei ao fim
-            buf == aos moviemntos possiveis
-            send(csock, buf, strlen(buf) + 1, 0);
-            }*/
+           init: pega_labirinto(&Colunas, &Linhas, board ,nome_arquivo);
            inicia_labiririnto(board);
+           for(int i = 0; i < 5; i++){
+                for(int j = 0; j < 5; j++){
+                    printf("%i",board[i][j]);
+                }
+                printf("\n");
+            }
            direcoes_possiveis(board,dir);
-           sprintf(buf, "%s\n", dir);
+
+           sprintf(buf, "Possible moves: %s\n", dir);
            send(csock, buf, strlen(buf) + 1, 0);
+
            while(1){
                 recv(csock, buf, BUFSZ, 0);
-                modifica_labirinto(board,buf);
-                direcoes_possiveis(board,dir);
-                sprintf(buf, "%s\n", dir);
-                send(csock, buf, strlen(buf) + 1, 0);
+                /*for(int i = 0; i < sizeof(buf) + 1; i++){
+                    if(buf[i] != ' ' || buf[i] != '\n'){
+                        res[i] = buf[i];
+                    }  
+		        }*/
+                remove_espacos(res,buf);
+                printf("%s , %li",res, sizeof(res));
+
+                if(strcmp(res,"exit") == 0){
+                    exit(EXIT_SUCCESS);
+                }
+                if(strcmp(res,"reset") == 0){
+                    printf("starting new game");
+                    goto init;
+                }
+
+                int aux = modifica_labirinto(board,res);
+                printf("\n");
+                for(int i = 0; i < 5; i++){
+                    for(int j = 0; j < 5; j++){
+                        printf("%i",board[i][j]);
+                    }
+                    printf("\n");
+                }
+                if(aux == 1){
+                    sprintf(buf, "You escaped!\n");
+                    send(csock, buf, strlen(buf) + 1, 0);
+                    break;
+                }
+                if(aux == 2){
+                    sprintf(buf, "error: you cannot go this way\n");
+                    send(csock, buf, strlen(buf) + 1, 0);
+                }
+                if(aux == 0){
+                    direcoes_possiveis(board,dir);
+                    sprintf(buf, "Possible moves: %s\n", dir);
+                    send(csock, buf, strlen(buf) + 1, 0);
+                } 
            }
 
         }
-        if(strcmp(res,"exit ") == 0){
+        else if(strcmp(res,"exit") == 0){
             break;
         }
-
-        sprintf(buf, "remote endpoint: %.1000s\n", caddrstr);
-        //sprintf(buf, "%s",result);
-        count = send(csock, buf, strlen(buf) + 1, 0);
-        if (count != strlen(buf) + 1) {
-            logexit("send");
+        else if(strcmp(res,"reset") == 0){
+            printf("starting new game");
+            goto init;
         }
+       else{
+        sprintf(buf,"digite uma algo valido\n");
+        send(csock, buf, strlen(buf) + 1, 0);
+       }
         
     }
     close(csock);
+    free(res);
+    free(dir);
     exit(EXIT_SUCCESS);
 }

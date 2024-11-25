@@ -49,13 +49,11 @@ int main(int argc, char **argv) {
 
 	char buf[BUFSZ];
 	memset(buf, 0, BUFSZ);
-	//char number[BUFSZ] = "start\n";
-	//memset(number + 6, 0, BUFSZ);
+	char *res = malloc(sizeof(100));
 	while(1) {
 		printf("mensagem> ");
 		fgets(buf, BUFSZ-1, stdin);
 
-		char *res = malloc(sizeof(100));
 		for(int i = 0; i <= 3; i++){
 			res[i] = buf[i];
 		}
@@ -68,11 +66,14 @@ int main(int argc, char **argv) {
 			logexit("send");
 		}
 		memset(buf, 0, BUFSZ);
-		count = recv(s, buf, BUFSZ, 0);
+		recv(s, buf, BUFSZ, 0);
+		for(int i = 0; i < 4; i++){
+			
+		}
 		printf("%s",buf);
 	}
 	close(s);
-
+	free(res);
 	printf("received all of bytes\n");
 	puts(buf);
 
