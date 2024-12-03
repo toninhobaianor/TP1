@@ -71,15 +71,19 @@ void direcoes_possiveis(Action *M){
       if((M->board[i][j]) == 5){
         if(M->board[i + 1][j] == 1 ){
           M->moves[1] = 2;
+          M->type = 4;
         }
         if(M->board[i][j + 1] == 1){
           M->moves[2] = 3;
+          M->type = 4;
         }
         if(M->board[i - 1][j] == 1){
           M->moves[3] = 4;
+          M->type = 4;
         }
         if(M->board[i][j - 1] == 1){
           M->moves[0] = 1;
+          M->type = 4;
         }
         break;
       }
@@ -110,99 +114,127 @@ char *print_direcoes_possiveis(Action *M){
 
 void modifica_tipo(Action *m,char *buffer){
   char *res = malloc(10*sizeof(char));
-  for(int i = 0; i <= 4; i++){
-    res[i] = buffer[i];
+  for(int i = 0; buffer[i] != '\n'; i++){
+      res[i] = buffer[i];
   }
+
   if (strcmp(res,"exit") == 0) {
 		m->type = 7;	
 	}
+
   if (strcmp(res,"start") == 0) {
 		m->type = 0;	
 	}
+
   if (strcmp(res,"right") == 0) {
-    	m->type = 1;	
+    	m->type = 1;
+      m->moves[1] = 2;	
 	}
+
+  if(strcmp(res,"left") == 0){
+    m->type = 1;
+    m->moves[3] = 4;
+  }
+
+  if(strcmp(res,"down") == 0){
+    m->type = 1;
+    m->moves[2] = 3;
+  }
+
+  if(strcmp(res,"up") == 0){
+    m->type = 1;
+    m->moves[0] = 1;
+  }
+
   if (strcmp(res,"map") == 0) {
 		m->type = 2;	
 	}
+
   if (strcmp(res,"hint") == 0) {
 		m->type = 3;	
 	}
+
   if (strcmp(res,"reset") == 0) {
 		m->type = 6;	
 	}
 }
 
-int modifica_labirinto(Action *M,Action *dir){
+void modifica_labirinto(Action *M,Action *dir){
   for(int i = 0; i < 5; i++){
     for(int j = 0; j < 5; j++){
       if(M->board[i][j] == 5){
-        if(strcmp(direcao,"down") == 0){            
+        if(dir->moves[2] == 3){            
           if(M->board[i + 1][j] == 3){
-            return 1;
+            M->type = 5;
           }
-          if(M->board[i + 1][j] == 0){
-            //printf("error: you cannot go this way");
-            return 2;
+          if(M->board[i + 1][j] == 0){           
           }
           if(M->board[i + 1][j] == 1){
             M->board[i + 1][j] = 5;
             M->board[i][j] = 1;
-            return 0;
+            M->type = 4;
           }
                 
         }
-        else if(strcmp(direcao,"right") == 0){
+        else if(dir->moves[1] == 2){
           if(M->board[i][j + 1] == 3){
             M->board[i][j] = 1;
-            return 1;
+            M->type = 5;
           }
           if(M->board[i][j + 1] == 0){
-            //printf("error: you cannot go this way");
-            return 2;
           }
           if(M->board[i][j + 1] == 1){
             M->board[i][j + 1] = 5;
             M->board[i][j] = 1;
-            return 0;
+            M->type = 4;
           }
         }
-        else if(strcmp(direcao,"up") == 0){
+        else if(dir->moves[0] == 1){
           if(M->board[i - 1][j] == 3){
             M->board[i][j] = 1;
-            return 1;
+            M->type = 5;
           }
           if(M->board[i - 1][j] == 0){
-            //printf("error: you cannot go this way");
-            return 2;
           }
           if(M->board[i - 1][j] == 1){
             M->board[i - 1][j] = 5;
             M->board[i][j] = 1;
-            return 0;
+            M->type = 4;
           }
         }
-        else if(strcmp(direcao,"left") == 0){
+        else if(dir->moves[3] == 4){
           if(M->board[i][j - 1] == 3){
             M->board[i][j] = 1;
-            return 1;
+            M->type = 5;
           }
           if(M->board[i][j - 1] == 0){
-            //printf("error: you cannot go this way");
-            return 2;
           }
           if(M->board[i][j - 1] == 1){
             M->board[i][j - 1] = 5;
             M->board[i][j] = 1;
-            return 0;
+            M->type = 4;
           }
-        }
-        else{
-          return 3;
         }
         break;
       }
     }
   }
-  return 0;
+}
+
+void revela_labirinto(Action *m){
+  printf("\n");
+  for(int i = 0; i < 5; i++){
+    for(int j = 0; j < 5; j++){
+      if((m->board[i][j]) == 0){
+        printf("# ");
+      }
+      if((m->board[i][j]) == 1){
+        printf("_ ");
+      }
+      if((m->board[i][j]) == 3){
+        printf("X ");
+      }
+    }
+    printf("\n");
+  }
 }

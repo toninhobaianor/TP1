@@ -73,8 +73,15 @@ int main(int argc, char **argv) {
             }
             printf("\n");
         }
-		dir = print_direcoes_possiveis(&board);
-		printf("Possible moves: %s\n", dir);	
+		if(board.type == 4){
+			dir = print_direcoes_possiveis(&board);
+			printf("Possible moves: %s\n", dir);
+		}
+		else if(board.type == 5){
+			printf("You escaped!");
+			revela_labirinto(&board);
+		}
+			
 	}
 	close(s);
 	printf("received all of bytes\n");

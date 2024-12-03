@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
     
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
-    char buf[BUFSZ];
 
     while (1) {      
-        inicializa_action(&board);
-        recv(csock, &board, sizeof(board), 0);
+        inicializa_action(&res);
+        recv(csock, &res, sizeof(board), 0);
         printf("[msg] Client connected\n");
     
-        if(board.type == 0){
+        //start   
+        if(res.type == 0){
            inicializa_action(&board);
            pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
            inicia_labiririnto(&board);
@@ -87,40 +87,20 @@ int main(int argc, char **argv) {
                 printf("\n");
             }
            direcoes_possiveis(&board);
-           // outra função para limpar os movimentos
            send(csock, &board, sizeof(board), 0);
-
+           
            while(1){
-                recv(csock, buf, sizeof(board), 0);
-
-                int aux = modifica_labirinto(&board,&res);
-                if(aux == 0){
-                    direcoes_possiveis(&board);
-                    send(csock, buf, strlen(buf) + 1, 0);
-                } 
-                if(aux == 1){
-                    sprintf(buf, "You escaped!\n");
-                    send(csock, buf, strlen(buf) + 1, 0);
-                    break;
-                }
-                if(aux == 2){
-                    sprintf(buf, "error: you cannot go this way\n");
-                    send(csock, buf, strlen(buf) + 1, 0);
-                }
-                if(aux == 3){
-                    sprintf(buf, "error: command not found\n");
-                    send(csock, buf, strlen(buf) + 1, 0);
-                }      
+            recv(csock, &res, sizeof(board), 0);
+            if(res.type == 1){
+                modifica_labirinto(&board,&res);
+                send(csock, &board, sizeof(board), 0);
+            }
            }
-
         }
-        else if(board.type == 7){
+        //exit
+        else if(res.type == 7){
             break;
         }
-       else{
-        sprintf(buf,"digite uma algo valido\n");
-        send(csock, buf, strlen(buf) + 1, 0);
-       }
         
     }
     close(csock);
