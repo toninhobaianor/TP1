@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
     int Colunas = 10;
     int Linhas = 10;
     Action board;
+    Action res;
 
     int s;
     s = socket(storage.ss_family, SOCK_STREAM, 0);
@@ -68,19 +69,14 @@ int main(int argc, char **argv) {
     
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
-    char *dir;
-    char *res = malloc(sizeof(100));
     char buf[BUFSZ];
 
     while (1) {      
-        memset(buf, 0, BUFSZ);
-        recv(csock, buf, BUFSZ, 0);
+        inicializa_action(&board);
+        recv(csock, &board, sizeof(board), 0);
         printf("[msg] Client connected\n");
-
-		for(int i = 0; i <= 4; i++){
-			res[i] = buf[i];
-		}
-        if(strcmp(res,"start") == 0){
+    
+        if(board.type == 0){
            inicializa_action(&board);
            pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
            inicia_labiririnto(&board);
@@ -92,35 +88,14 @@ int main(int argc, char **argv) {
             }
            direcoes_possiveis(&board);
            // outra função para limpar os movimentos
-           dir = print_direcoes_possiveis(&board);
-           sprintf(buf, "Possible moves: %s\n", dir);
-           send(csock, buf, strlen(buf) + 1, 0);
+           send(csock, &board, sizeof(board), 0);
 
            while(1){
-                recv(csock, buf, BUFSZ, 0);
-                //remove_espacos(res,buf);
-                //printf("%s , %li",res, sizeof(res));
+                recv(csock, buf, sizeof(board), 0);
 
-                if(strcmp(res,"exit") == 0){
-                    exit(EXIT_SUCCESS);
-                }
-                if(strcmp(res,"reset") == 0){
-                    printf("starting new game");
-                    //goto init;
-                }
-
-                int aux = modifica_labirinto(&board,res);
-                printf("\n");
-                for(int i = 0; i < 5; i++){
-                    for(int j = 0; j < 5; j++){
-                        printf("%i",board.board[i][j]);
-                    }
-                    printf("\n");
-                }
+                int aux = modifica_labirinto(&board,&res);
                 if(aux == 0){
                     direcoes_possiveis(&board);
-                    dir = print_direcoes_possiveis(&board);
-                    sprintf(buf, "Possible moves: %s\n", dir);
                     send(csock, buf, strlen(buf) + 1, 0);
                 } 
                 if(aux == 1){
@@ -139,12 +114,8 @@ int main(int argc, char **argv) {
            }
 
         }
-        else if(strcmp(res,"exit") == 0){
+        else if(board.type == 7){
             break;
-        }
-        else if(strcmp(res,"reset") == 0){
-            printf("starting new game");
-            //goto init;
         }
        else{
         sprintf(buf,"digite uma algo valido\n");
@@ -153,7 +124,5 @@ int main(int argc, char **argv) {
         
     }
     close(csock);
-    free(res);
-    free(dir);
     exit(EXIT_SUCCESS);
 }

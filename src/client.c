@@ -10,6 +10,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#define BUF 8
+#define BUFSZ 1024
+
 //mostrar o modo de uso do cliente
 void usage(int argc, char **argv) {
 	printf("usage: %s <server IP> <server port>\n", argv[0]);
@@ -17,7 +20,6 @@ void usage(int argc, char **argv) {
 	exit(EXIT_FAILURE);
 }
 
-#define BUFSZ 1024
 
 int main(int argc, char **argv) {
 	if (argc < 3) {
@@ -36,6 +38,7 @@ int main(int argc, char **argv) {
 	if (s == -1) {
 		logexit("socket");
 	}
+    Action board;
 	//conversão do tipo sockaddr_storage para sockaddr
 	struct sockaddr *addr = (struct sockaddr *)(&storage);
 	if (0 != connect(s, addr, sizeof(storage))) {
@@ -47,33 +50,33 @@ int main(int argc, char **argv) {
 
 	printf("connected to %s\n", addrstr);
 
-	char buf[BUFSZ];
-	memset(buf, 0, BUFSZ);
-	char *res = malloc(sizeof(100));
+	char buf[BUF];
+	char *dir;
+	memset(buf, 0, BUF);
+	//char *res = malloc(sizeof(100));
 	while(1) {
-		printf("mensagem> ");
-		fgets(buf, BUFSZ-1, stdin);
+		inicializa_action(&board);
 
-		for(int i = 0; i <= 3; i++){
-			res[i] = buf[i];
-		}
-		if (strcmp(res,"exit") == 0) {
+		printf("mensagem> ");
+		fgets(buf, BUF, stdin);
+		modifica_tipo(&board,buf);
+		
+		if (board.type == 7) {
 			break;	
 		}
 
-		size_t count = send(s, buf, strlen(buf)+1, 0);
-		if (count != strlen(buf)+1) {
-			logexit("send");
-		}
-		memset(buf, 0, BUFSZ);
-		recv(s, buf, BUFSZ, 0);
-		for(int i = 0; i < 4; i++){
-			
-		}
-		printf("%s",buf);
+		send(s, &board, sizeof(board), 0);
+		recv(s, &board, sizeof(board), 0);
+		for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+            	printf("%i ",board.board[i][j]);
+            }
+            printf("\n");
+        }
+		dir = print_direcoes_possiveis(&board);
+		printf("Possible moves: %s\n", dir);	
 	}
 	close(s);
-	free(res);
 	printf("received all of bytes\n");
 	puts(buf);
 

@@ -12,11 +12,12 @@ void remove_espacos( char * out, const char * in );
 void pega_labirinto(int *m, int *n, Action *M,char *nome_arquivo);
 void inicializa_action(Action *M);
 char *print_direcoes_possiveis(Action *M);
+void modifica_tipo(Action *m,char *buffer);
 // função para ocultar o labirinto
 // função de consulta()
 void inicia_labiririnto(Action *M);
 void direcoes_possiveis(Action *M);
-int modifica_labirinto(Action *M, char *direcao);
+int modifica_labirinto(Action *M, Action *dir);
 
 
 

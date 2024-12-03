@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #define MAX_SIZE 10
+#define BUFSZ 1024
 
 void remove_espacos( char * out, const char * in ){
     const char * p = in;
@@ -21,12 +22,12 @@ void remove_espacos( char * out, const char * in ){
 }
 
 void inicializa_action(Action *M){
-  M->moves[0] = '0';
-  M->moves[1] = '0';
-  M->moves[2] = '0';
-  M->moves[3] = '0';
+  M->moves[0] = 0;
+  M->moves[1] = 0;
+  M->moves[2] = 0;
+  M->moves[3] = 0;
   for(int i = 0; i < 10; i++){
-    for(int j; j < 10; j++){
+    for(int j = 0; j < 10; j++){
       M->board[i][j] = 0;
     }
   }
@@ -107,7 +108,32 @@ char *print_direcoes_possiveis(Action *M){
   return direcoes;
 }
 
-int modifica_labirinto(Action *M,char *direcao){
+void modifica_tipo(Action *m,char *buffer){
+  char *res = malloc(10*sizeof(char));
+  for(int i = 0; i <= 4; i++){
+    res[i] = buffer[i];
+  }
+  if (strcmp(res,"exit") == 0) {
+		m->type = 7;	
+	}
+  if (strcmp(res,"start") == 0) {
+		m->type = 0;	
+	}
+  if (strcmp(res,"right") == 0) {
+    	m->type = 1;	
+	}
+  if (strcmp(res,"map") == 0) {
+		m->type = 2;	
+	}
+  if (strcmp(res,"hint") == 0) {
+		m->type = 3;	
+	}
+  if (strcmp(res,"reset") == 0) {
+		m->type = 6;	
+	}
+}
+
+int modifica_labirinto(Action *M,Action *dir){
   for(int i = 0; i < 5; i++){
     for(int j = 0; j < 5; j++){
       if(M->board[i][j] == 5){
