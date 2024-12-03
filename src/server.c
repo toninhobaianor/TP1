@@ -77,25 +77,34 @@ int main(int argc, char **argv) {
     
         //start   
         if(res.type == 0){
-           inicializa_action(&board);
-           pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
-           inicia_labiririnto(&board);
-           for(int i = 0; i < 5; i++){
+           	printf("starting a new game \n");
+           	inicializa_action(&board);
+           	pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
+           	inicia_labiririnto(&board);
+           	for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
                     printf("%i ",board.board[i][j]);
                 }
                 printf("\n");
             }
-           direcoes_possiveis(&board);
-           send(csock, &board, sizeof(board), 0);
+           	direcoes_possiveis(&board);
+           	send(csock, &board, sizeof(board), 0);
            
-           while(1){
-            recv(csock, &res, sizeof(board), 0);
-            if(res.type == 1){
-                modifica_labirinto(&board,&res);
-                send(csock, &board, sizeof(board), 0);
-            }
-           }
+			while(1){
+				recv(csock, &res, sizeof(board), 0);
+            	if(res.type == 1){ // move
+                	modifica_labirinto(&board,&res);
+                	send(csock, &board, sizeof(board), 0);
+            	}
+            	else if(res.type == 7){  //exit
+                	exit(EXIT_SUCCESS);
+            	}
+            	else if(res.type == 6){ //reset
+                	inicializa_action(&board);
+					res.type = 0;
+                	break;
+            	}
+           	}
         }
         //exit
         else if(res.type == 7){

@@ -122,39 +122,39 @@ void modifica_tipo(Action *m,char *buffer){
 		m->type = 7;	
 	}
 
-  if (strcmp(res,"start") == 0) {
+  else if (strcmp(res,"start") == 0) {
 		m->type = 0;	
 	}
 
-  if (strcmp(res,"right") == 0) {
-    	m->type = 1;
-      m->moves[1] = 2;	
+  else if (strcmp(res,"right") == 0) {
+    m->type = 1;
+    m->moves[1] = 2;	
 	}
 
-  if(strcmp(res,"left") == 0){
+  else if(strcmp(res,"left") == 0){
     m->type = 1;
     m->moves[3] = 4;
   }
 
-  if(strcmp(res,"down") == 0){
+  else if(strcmp(res,"down") == 0){
     m->type = 1;
     m->moves[2] = 3;
   }
 
-  if(strcmp(res,"up") == 0){
+  else if(strcmp(res,"up") == 0){
     m->type = 1;
     m->moves[0] = 1;
   }
 
-  if (strcmp(res,"map") == 0) {
+  else if(strcmp(res,"map") == 0) {
 		m->type = 2;	
 	}
 
-  if (strcmp(res,"hint") == 0) {
+  else if(strcmp(res,"hint") == 0) {
 		m->type = 3;	
 	}
 
-  if (strcmp(res,"reset") == 0) {
+  else if (strcmp(res,"reset") == 0) {
 		m->type = 6;	
 	}
 }

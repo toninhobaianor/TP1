@@ -50,38 +50,88 @@ int main(int argc, char **argv) {
 
 	printf("connected to %s\n", addrstr);
 
-	char buf[BUF];
+	char buf[BUFSZ];
 	char *dir;
-	memset(buf, 0, BUF);
-	//char *res = malloc(sizeof(100));
+	memset(buf, 0, BUFSZ);
+	int init = 0;
 	while(1) {
 		inicializa_action(&board);
 
 		printf("mensagem> ");
-		fgets(buf, BUF, stdin);
+		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
-		
+
+		//exit
 		if (board.type == 7) {
+			send(s, &board, sizeof(board), 0);
 			break;	
 		}
-
-		send(s, &board, sizeof(board), 0);
-		recv(s, &board, sizeof(board), 0);
-		for(int i = 0; i < 5; i++){
-            for(int j = 0; j < 5; j++){
-            	printf("%i ",board.board[i][j]);
-            }
-            printf("\n");
-        }
-		if(board.type == 4){
-			dir = print_direcoes_possiveis(&board);
-			printf("Possible moves: %s\n", dir);
+		if (board.type == 6) {
+			init = 1;
+			send(s, &board, sizeof(board), 0);
+			recv(s, &board, sizeof(board), 0);
+			for(int i = 0; i < 5; i++){
+				for(int j = 0; j < 5; j++){
+					printf("%i ",board.board[i][j]);
+				}
+				printf("\n");
+			}
+			if(board.type == 4){
+				dir = print_direcoes_possiveis(&board);
+				printf("Possible moves: %s\n", dir);
+			}
+			else if(board.type == 5){
+				printf("You escaped!");
+				revela_labirinto(&board);
+			}	
 		}
-		else if(board.type == 5){
-			printf("You escaped!");
-			revela_labirinto(&board);
+		//start
+		else if(board.type == 0){
+			init = 1;
+			send(s, &board, sizeof(board), 0);
+			recv(s, &board, sizeof(board), 0);
+			for(int i = 0; i < 5; i++){
+				for(int j = 0; j < 5; j++){
+					printf("%i ",board.board[i][j]);
+				}
+				printf("\n");
+			}
+			if(board.type == 4){
+				dir = print_direcoes_possiveis(&board);
+				printf("Possible moves: %s\n", dir);
+			}
+			else if(board.type == 5){
+				printf("You escaped!");
+				revela_labirinto(&board);
+			}
 		}
-			
+		// move
+		else if(board.type == 1 && init == 1){
+			send(s, &board, sizeof(board), 0);
+			recv(s, &board, sizeof(board), 0);
+			for(int i = 0; i < 5; i++){
+				for(int j = 0; j < 5; j++){
+					printf("%i ",board.board[i][j]);
+				}
+				printf("\n");
+			}
+			if(board.type == 4){
+				dir = print_direcoes_possiveis(&board);
+				printf("Possible moves: %s\n", dir);
+			}
+			else if(board.type == 5){
+				printf("You escaped!");
+				revela_labirinto(&board);
+			}
+		}
+		//erro
+		else if(init == 0 && board.type == 1){
+			printf("error: start the game first \n");
+		}
+		//erro
+		else{
+			printf("error: command not found \n");
+		}
 	}
 	close(s);
 	printf("received all of bytes\n");
