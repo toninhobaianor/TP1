@@ -82,21 +82,24 @@ int main(int argc, char **argv) {
 				}
 				send(s, &board, sizeof(board), 0);
 				recv(s, &board, sizeof(board), 0);
-				for(int i = 0; i < 5; i++){
-					for(int j = 0; j < 5; j++){
-						printf("%i ",board.board[i][j]);
-					}
-					printf("\n");
-				}
 				if(board.type == 4){
 					dir = print_direcoes_possiveis(&board);
 					printf("Possible moves: %s\n", dir);
 				}
 				else if(board.type == 5){
 					printf("You escaped!");
-					revela_labirinto(&board);
+					Mostra_map(&board);
 					fim = 1;
 				}
+				break;
+			case 2:
+				if(init == 0){
+					printf("error: start the game first \n");
+					break;
+				}
+				send(s, &board, sizeof(board), 0);
+				recv(s, &board, sizeof(board), 0);
+				Mostra_map(&board);
 				break;
 			
 			case 7:

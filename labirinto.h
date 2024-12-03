@@ -13,13 +13,13 @@ void pega_labirinto(int *m, int *n, Action *M,char *nome_arquivo);
 void inicializa_action(Action *M);
 char *print_direcoes_possiveis(Action *M);
 void modifica_tipo(Action *m,char *buffer);
-void revela_labirinto(Action *m);
+void Mostra_map(Action *M);
 void Limpa_movimentos(Action *M);
 // função para ocultar o labirinto
 // função de consulta()
-void inicia_labiririnto(Action *M);
-void direcoes_possiveis(Action *M);
-void modifica_labirinto(Action *M, Action *dir);
+int *inicia_labiririntos(Action *M,Action *N);
+void direcoes_possiveis(Action *M,int *posi);
+int *modifica_labirinto(Action *M, Action *N,Action *dir,int *posi);
 
 
 

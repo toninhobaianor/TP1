@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     int Linhas = 10;
     Action board;
     Action res;
+    Action modificado;
 
     int s;
     s = socket(storage.ss_family, SOCK_STREAM, 0);
@@ -70,6 +71,7 @@ int main(int argc, char **argv) {
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
 	int comeco = 0;
+    int *posicao;
     while (1) {      
         inicializa_action(&res);
         recv(csock, &res, sizeof(board), 0);
@@ -85,22 +87,26 @@ int main(int argc, char **argv) {
 				printf("starting a new game\n");
 
 				inicializa_action(&board);
-				pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
-				inicia_labiririnto(&board);
+                inicializa_action(&modificado);
 
-				direcoes_possiveis(&board);
-				send(csock, &board, sizeof(board), 0);
+				pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
+				posicao = inicia_labiririntos(&board,&modificado);
+				direcoes_possiveis(&modificado, posicao);
+				send(csock, &modificado, sizeof(board), 0);
 				Limpa_movimentos(&board);
 				break;
 			case 7:
 				printf("client disconnected");
                 exit(EXIT_SUCCESS);
 			case 1:
-				modifica_labirinto(&board,&res);
-				direcoes_possiveis(&board);
-                send(csock, &board, sizeof(board), 0);
+				posicao = modifica_labirinto(&board,&modificado,&res,posicao);
+				direcoes_possiveis(&modificado,posicao);
+                send(csock, &modificado, sizeof(board), 0);
 				Limpa_movimentos(&board);
 				break;
+            case 2:
+                send(csock, &modificado, sizeof(board), 0);
+                break;
 			default:
 				break;
 		}
