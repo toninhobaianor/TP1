@@ -54,83 +54,58 @@ int main(int argc, char **argv) {
 	char *dir;
 	memset(buf, 0, BUFSZ);
 	int init = 0;
+	int fim = 0;
 	while(1) {
 		inicializa_action(&board);
 
 		printf("mensagem> ");
 		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
-
+	
 		//exit
-		if (board.type == 7) {
-			send(s, &board, sizeof(board), 0);
-			break;	
-		}
-		if (board.type == 6) {
-			init = 1;
-			send(s, &board, sizeof(board), 0);
-			recv(s, &board, sizeof(board), 0);
-			for(int i = 0; i < 5; i++){
-				for(int j = 0; j < 5; j++){
-					printf("%i ",board.board[i][j]);
+		switch(board.type){
+			case 6:
+				init = 1;
+				inicializa_action(&board);
+			case 1:
+				if(init == 0){
+					printf("error: start the game first \n");
+					break;
 				}
-				printf("\n");
-			}
-			if(board.type == 4){
-				dir = print_direcoes_possiveis(&board);
-				printf("Possible moves: %s\n", dir);
-			}
-			else if(board.type == 5){
-				printf("You escaped!");
-				revela_labirinto(&board);
-			}	
-		}
-		//start
-		else if(board.type == 0){
-			init = 1;
-			send(s, &board, sizeof(board), 0);
-			recv(s, &board, sizeof(board), 0);
-			for(int i = 0; i < 5; i++){
-				for(int j = 0; j < 5; j++){
-					printf("%i ",board.board[i][j]);
+				if(fim == 1){
+					break;
 				}
-				printf("\n");
-			}
-			if(board.type == 4){
-				dir = print_direcoes_possiveis(&board);
-				printf("Possible moves: %s\n", dir);
-			}
-			else if(board.type == 5){
-				printf("You escaped!");
-				revela_labirinto(&board);
-			}
-		}
-		// move
-		else if(board.type == 1 && init == 1){
-			send(s, &board, sizeof(board), 0);
-			recv(s, &board, sizeof(board), 0);
-			for(int i = 0; i < 5; i++){
-				for(int j = 0; j < 5; j++){
-					printf("%i ",board.board[i][j]);
+			case 0:
+				init = 1;
+				if(fim == 1){
+					break;
 				}
-				printf("\n");
-			}
-			if(board.type == 4){
-				dir = print_direcoes_possiveis(&board);
-				printf("Possible moves: %s\n", dir);
-			}
-			else if(board.type == 5){
-				printf("You escaped!");
-				revela_labirinto(&board);
-			}
-		}
-		//erro
-		else if(init == 0 && board.type == 1){
-			printf("error: start the game first \n");
-		}
-		//erro
-		else{
-			printf("error: command not found \n");
+				send(s, &board, sizeof(board), 0);
+				recv(s, &board, sizeof(board), 0);
+				for(int i = 0; i < 5; i++){
+					for(int j = 0; j < 5; j++){
+						printf("%i ",board.board[i][j]);
+					}
+					printf("\n");
+				}
+				if(board.type == 4){
+					dir = print_direcoes_possiveis(&board);
+					printf("Possible moves: %s\n", dir);
+				}
+				else if(board.type == 5){
+					printf("You escaped!");
+					revela_labirinto(&board);
+					fim = 1;
+				}
+				break;
+			
+			case 7:
+				send(s, &board, sizeof(board), 0);
+				break;
+			
+			default:
+				printf("error: command not found \n");
+				break;
 		}
 	}
 	close(s);

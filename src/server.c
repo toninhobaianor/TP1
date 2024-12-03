@@ -69,48 +69,41 @@ int main(int argc, char **argv) {
     
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
-
+	int comeco = 0;
     while (1) {      
         inicializa_action(&res);
         recv(csock, &res, sizeof(board), 0);
-        printf("[msg] Client connected\n");
-    
-        //start   
-        if(res.type == 0){
-           	printf("starting a new game \n");
-           	inicializa_action(&board);
-           	pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
-           	inicia_labiririnto(&board);
-           	for(int i = 0; i < 5; i++){
-                for(int j = 0; j < 5; j++){
-                    printf("%i ",board.board[i][j]);
-                }
-                printf("\n");
-            }
-           	direcoes_possiveis(&board);
-           	send(csock, &board, sizeof(board), 0);
-           
-			while(1){
-				recv(csock, &res, sizeof(board), 0);
-            	if(res.type == 1){ // move
-                	modifica_labirinto(&board,&res);
-                	send(csock, &board, sizeof(board), 0);
-            	}
-            	else if(res.type == 7){  //exit
-                	exit(EXIT_SUCCESS);
-            	}
-            	else if(res.type == 6){ //reset
-                	inicializa_action(&board);
-					res.type = 0;
-                	break;
-            	}
-           	}
-        }
-        //exit
-        else if(res.type == 7){
-            break;
-        }
         
+		switch (res.type){
+			case 6:
+				Limpa_movimentos(&board);
+			case 0:
+				if(comeco == 0){
+					printf("[msg] Client connected\n");
+				}
+				comeco = 1;
+				printf("starting a new game\n");
+
+				inicializa_action(&board);
+				pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
+				inicia_labiririnto(&board);
+
+				direcoes_possiveis(&board);
+				send(csock, &board, sizeof(board), 0);
+				Limpa_movimentos(&board);
+				break;
+			case 7:
+				printf("client disconnected");
+                exit(EXIT_SUCCESS);
+			case 1:
+				modifica_labirinto(&board,&res);
+				direcoes_possiveis(&board);
+                send(csock, &board, sizeof(board), 0);
+				Limpa_movimentos(&board);
+				break;
+			default:
+				break;
+		}
     }
     close(csock);
     exit(EXIT_SUCCESS);

@@ -69,20 +69,20 @@ void direcoes_possiveis(Action *M){
   for(int i = 0; i < 5; i++){
     for(int j = 0; j < 5; j++){
       if((M->board[i][j]) == 5){
-        if(M->board[i + 1][j] == 1 ){
-          M->moves[1] = 2;
+        if(M->board[i - 1][j] == 1){ // up
+          M->moves[0] = 1;
           M->type = 4;
         }
-        if(M->board[i][j + 1] == 1){
-          M->moves[2] = 3;
-          M->type = 4;
-        }
-        if(M->board[i - 1][j] == 1){
+        if(M->board[i][j - 1] == 1){ // left
           M->moves[3] = 4;
           M->type = 4;
         }
-        if(M->board[i][j - 1] == 1){
-          M->moves[0] = 1;
+        if(M->board[i + 1][j] == 1){  //down
+          M->moves[2] = 3;
+          M->type = 4;
+        }
+        if(M->board[i][j + 1] == 1){ //right
+          M->moves[1] = 2;
           M->type = 4;
         }
         break;
@@ -165,6 +165,7 @@ void modifica_labirinto(Action *M,Action *dir){
       if(M->board[i][j] == 5){
         if(dir->moves[2] == 3){            
           if(M->board[i + 1][j] == 3){
+            M->board[i][j] = 1;
             M->type = 5;
           }
           if(M->board[i + 1][j] == 0){           
@@ -176,7 +177,7 @@ void modifica_labirinto(Action *M,Action *dir){
           }
                 
         }
-        else if(dir->moves[1] == 2){
+        if(dir->moves[1] == 2){
           if(M->board[i][j + 1] == 3){
             M->board[i][j] = 1;
             M->type = 5;
@@ -189,7 +190,7 @@ void modifica_labirinto(Action *M,Action *dir){
             M->type = 4;
           }
         }
-        else if(dir->moves[0] == 1){
+        if(dir->moves[0] == 1){
           if(M->board[i - 1][j] == 3){
             M->board[i][j] = 1;
             M->type = 5;
@@ -202,7 +203,7 @@ void modifica_labirinto(Action *M,Action *dir){
             M->type = 4;
           }
         }
-        else if(dir->moves[3] == 4){
+        if(dir->moves[3] == 4){
           if(M->board[i][j - 1] == 3){
             M->board[i][j] = 1;
             M->type = 5;
@@ -237,4 +238,11 @@ void revela_labirinto(Action *m){
     }
     printf("\n");
   }
+}
+
+void Limpa_movimentos(Action *M){
+  M->moves[0] = 0;
+  M->moves[1] = 0;
+  M->moves[2] = 0;
+  M->moves[3] = 0;
 }

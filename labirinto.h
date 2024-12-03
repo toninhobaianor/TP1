@@ -14,6 +14,7 @@ void inicializa_action(Action *M);
 char *print_direcoes_possiveis(Action *M);
 void modifica_tipo(Action *m,char *buffer);
 void revela_labirinto(Action *m);
+void Limpa_movimentos(Action *M);
 // função para ocultar o labirinto
 // função de consulta()
 void inicia_labiririnto(Action *M);
