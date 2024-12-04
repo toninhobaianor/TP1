@@ -1,9 +1,8 @@
 all:
-	gcc -Wall -c src/common.c
-	gcc -Wall -c src/labirinto.c
-	gcc -Wall src/client.c labirinto.o common.o -o client
-	gcc -Wall src/server.c labirinto.o common.o -o server
-	gcc -Wall server-mt.c common.o -lpthread -o server-mt
+	gcc -Wall -c common.c
+	gcc -Wall -c labirinto.c
+	gcc -Wall client.c labirinto.o common.o -o bin/client
+	gcc -Wall server.c labirinto.o common.o -o bin/server
 
 clean:
-	rm common.o client server server-mt
+	rm common.o bin/client bin/server

@@ -1,25 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../labirinto.h"
+#include "labirinto.h"
 #include <ctype.h>
 
 #define MAX_SIZE 10
 #define BUFSZ 1024
 
-void remove_espacos( char * out, const char * in ){
-    const char * p = in;
-    int i = 0;
-
-    while( *p ){
-        if( !isspace(*p) ){
-          out[i++] = *p;
-        }
-        p++;
-    }
-    out[i] = 0;
-    //return out;
-}
 
 void inicializa_action(Action *M){
   M->moves[0] = 0;
@@ -74,12 +61,12 @@ void pega_labirinto(int *tam, Action *M, char *nome_arquivo){
     fclose(arquivo);
 }
 
-int *inicia_labiririntos(Action *M,Action *N){
+int *inicia_labiririntos(Action *M,Action *N,int *tam){
   int encontrei = 0;
   int aux;
   int *posi = malloc(10 * sizeof(int)); 
-    for(int i = 0; i < 5; i++){
-        for(int j = 0; j < 5; j++){
+    for(int i = 0; i < *tam; i++){
+        for(int j = 0; j < *tam; j++){
             if((M->board[i][j]) == 2){
               encontrei = 1;
 
@@ -248,6 +235,7 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
       posicao[1] = j;
       M->type = 4;
       N->type = 4;
+      return posicao;
     }
 
     else if(M->board[i][j + 1] == 1){ // right
@@ -269,6 +257,7 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
       posicao[1] = j + 1;
       M->type = 4;
       N->type = 4;
+      return posicao;
     }
 
     else if(M->board[i - 1][j] == 1){ // up
@@ -289,6 +278,7 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
       posicao[1] = j;
       M->type = 4;
       N->type = 4;
+      return posicao;
     }
 
     else if(M->board[i][j - 1] == 1){
@@ -311,8 +301,8 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
       posicao[1] = j - 1;
       M->type = 4;
       N->type = 4;
+      return posicao;
     }
-    return posicao;  
   }
   else{
     if(direcao->moves[2] == 3){ //down     
@@ -339,9 +329,10 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
         posicao[1] = j;
         M->type = 4;
         N->type = 4;
+        return posicao;
       }           
     }
-    else if(direcao->moves[1] == 2){ // right 
+    if(direcao->moves[1] == 2){ // right 
       if(M->board[i][j + 1] == 3 || N->board[i][j + 1] == 3){
         M->board[i][j] = 1;
         M->type = 5;
@@ -366,9 +357,10 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
         posicao[1] = j + 1;
         M->type = 4;
         N->type = 4;
+        return posicao;
       }
     }
-    else if(direcao->moves[0] == 1){ //up
+    if(direcao->moves[0] == 1){ //up
       if(M->board[i - 1][j] == 3){
         M->board[i][j] = 1;
         M->type = 5;
@@ -392,9 +384,10 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
         posicao[1] = j;
         M->type = 4;
         N->type = 4;
+        return posicao;
       }
     }
-    else if(direcao->moves[3] == 4){ // left 
+    if(direcao->moves[3] == 4){ // left 
       if(M->board[i][j - 1] == 3){
         M->board[i][j] = 1;
         M->type = 5;
@@ -420,32 +413,33 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init)
         posicao[1] = j - 1;
         M->type = 4;
         N->type = 4;
+        return posicao;
       }
     }
-    return posicao;
   }
+  return posicao;
 }
 
 void Mostra_map(Action *m){
-  for(int i = 0; i < 5; i++){
-    for(int j = 0; j < 5; j++){
+  for(int i = 0; i < MAX_SIZE; i++){
+    for(int j = 0; j < MAX_SIZE; j++){
       if((m->board[i][j]) == 0){
-        printf("# ");
+        printf("#\t");
       }
       if((m->board[i][j]) == 1){
-        printf("_ ");
+        printf("_\t");
       }
       if((m->board[i][j]) == 3){
-        printf("X ");
+        printf("X\t");
       }
       if((m->board[i][j]) == 2){
-        printf("> ");
+        printf(">\t");
       }
       if((m->board[i][j]) == 4){
-        printf("? ");
+        printf("?\t");
       }
       if((m->board[i][j]) == 5){
-        printf("+ ");
+        printf("+\t");
       }
     }
     printf("\n");

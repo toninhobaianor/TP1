@@ -1,5 +1,5 @@
-#include "../common.h"
-#include "../labirinto.h"
+#include "common.h"
+#include "labirinto.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
 		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
 	
+	
 		switch(board.type){
 			case 1:
 				if(init == 0){
@@ -96,7 +97,7 @@ int main(int argc, char **argv) {
 				if(recebido.type == 5){
 					send(s, &board, sizeof(board), 0);
 					recv(s, &recebido, sizeof(recebido), 0);
-					printf("You escaped!");
+					printf("You escaped! \n");
 					Mostra_map(&recebido);
 					fim = 1;
 				}

@@ -1,5 +1,5 @@
-#include "../common.h"
-#include "../labirinto.h"
+#include "common.h"
+#include "labirinto.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
                 inicializa_action(&modificado);
 
 				pega_labirinto(&tamanho, &board ,argv[4]);
-				posicao = inicia_labiririntos(&board,&modificado);
+				posicao = inicia_labiririntos(&board,&modificado,&tamanho);
 				direcoes_possiveis(&modificado, posicao);
 				send(csock, &modificado, sizeof(modificado), 0);
 				Limpa_movimentos(&modificado);
