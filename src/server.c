@@ -27,10 +27,7 @@ int main(int argc, char **argv) {
         usage(argc, argv);
     }
 
-    char nome_arquivo[100] = "input/in.txt";
-    //nome_arquivo = (char *)(&argv[4]);
-    int Colunas = 10;
-    int Linhas = 10;
+    int tamanho = 10;
     Action board;
     Action res;
     Action modificado;
@@ -89,16 +86,17 @@ int main(int argc, char **argv) {
 				inicializa_action(&board);
                 inicializa_action(&modificado);
 
-				pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
+				pega_labirinto(&tamanho, &board ,argv[4]);
 				posicao = inicia_labiririntos(&board,&modificado);
 				direcoes_possiveis(&modificado, posicao);
 				send(csock, &modificado, sizeof(modificado), 0);
 				Limpa_movimentos(&modificado);
 				break;
 			case 7:
-				printf("client disconnected");
+				printf("client disconnected \n");
                 exit(EXIT_SUCCESS);
 			case 1:
+                Limpa_movimentos(&modificado);
 				posicao = modifica_labirinto(&board,&modificado,&res,posicao);
 				direcoes_possiveis(&modificado,posicao);
                 send(csock, &modificado, sizeof(modificado), 0);

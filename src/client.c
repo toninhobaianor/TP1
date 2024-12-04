@@ -10,7 +10,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define BUF 8
 #define BUFSZ 1024
 
 //mostrar o modo de uso do cliente
@@ -39,6 +38,7 @@ int main(int argc, char **argv) {
 		logexit("socket");
 	}
     Action board;
+	Action recebido;
 	//conversão do tipo sockaddr_storage para sockaddr
 	struct sockaddr *addr = (struct sockaddr *)(&storage);
 	if (0 != connect(s, addr, sizeof(storage))) {
@@ -51,21 +51,19 @@ int main(int argc, char **argv) {
 	printf("connected to %s\n", addrstr);
 
 	char buf[BUFSZ];
-	char *dir;
 	memset(buf, 0, BUFSZ);
 	int init = 0;
 	int fim = 0;
+	int aux;
 	while(1) {
 		inicializa_action(&board);
 
 		printf("mensagem> ");
 		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
+	
 		//exit
 		switch(board.type){
-			case 6:
-				init = 1;
-				inicializa_action(&board);
 			case 1:
 				if(init == 0){
 					printf("error: start the game first \n");
@@ -74,22 +72,31 @@ int main(int argc, char **argv) {
 				if(fim == 1){
 					break;
 				}
+				aux = verifica_moves(&board,&recebido);
+				if(aux == 1){
+					printf("error: you cannot go this way \n");
+					break;
+				}
+			case 6:
+				if(fim == 1){
+					board.type = 0;
+				}
+				fim = 0;
 			case 0:
 				init = 1;
 				if(fim == 1){
 					break;
 				}
 				send(s, &board, sizeof(board), 0);
-				recv(s, &board, sizeof(board), 0);
-				if(board.type == 4){
-					dir = print_direcoes_possiveis(&board);
-					printf("Possible moves: %s\n", dir);
+				recv(s, &recebido, sizeof(recebido), 0);
+				if(recebido.type == 4){
+					print_direcoes_possiveis(&recebido);
 				}
-				if(board.type == 5){
+				if(recebido.type == 5){
 					send(s, &board, sizeof(board), 0);
-					recv(s, &board, sizeof(board), 0);
+					recv(s, &recebido, sizeof(recebido), 0);
 					printf("You escaped!");
-					Mostra_map(&board);
+					Mostra_map(&recebido);
 					fim = 1;
 				}
 				break;
@@ -105,7 +112,7 @@ int main(int argc, char **argv) {
 			
 			case 7:
 				send(s, &board, sizeof(board), 0);
-				break;
+				exit(EXIT_SUCCESS);
 			
 			default:
 				printf("error: command not found \n");

@@ -34,16 +34,36 @@ void inicializa_action(Action *M){
 }
 
 
-void pega_labirinto(int *m, int *n, Action *M, char *nome_arquivo){
+void pega_labirinto(int *tam, Action *M, char *nome_arquivo){
   FILE *arquivo = fopen(nome_arquivo, "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo\n");
         exit(EXIT_FAILURE); // Erro ao abrir arquivo
     }
 
+    char buffer[1024];
+    int count = 0;
+
+    if (fgets(buffer, sizeof(buffer), arquivo) != NULL){
+        char *token = strtok(buffer, " ");
+        while (token != NULL){
+          count++;
+          token = strtok(NULL, " ");
+        }
+    }
+
+    rewind(arquivo);
+
+    if (count != 5 && count != 10){
+      printf("Error: Matrix de tamanho invalido \n");
+      fclose(arquivo);
+      exit(EXIT_FAILURE);
+    }
+    *tam = count;
+
     // Ler o labirinto no formato de matriz 10x10
-    for (int i = 0; i < MAX_SIZE; i++) {
-        for (int j = 0; j < 5; j++) {
+    for (int i = 0; i < *tam; i++) {
+        for (int j = 0; j < *tam; j++) {
             char c;
             fscanf(arquivo, " %c", &c);  // Lê um caractere, o espaço antes de %c ignora espaços em branco
             M->board[i][j] = (int) c - 48; // Converte o caractere em seu valor ASCII
@@ -131,25 +151,28 @@ void direcoes_possiveis(Action *M, int *posi){
   
 }
 
-char *print_direcoes_possiveis(Action *M){
-  char *direcoes = malloc(100* sizeof(char));
-  if(M->moves[0] == 1){
-    direcoes = strcat(direcoes,"Up,");
-    //direcoes = "Up,";
+void print_direcoes_possiveis(Action *M){
+  printf("Possible moves: ");
+  for(int i = 0; i < 4; i++){
+    if(M->moves[i] != 0){
+      if(M->moves[i] == 1){
+        printf("up");
+      }
+      if(M->moves[i] == 2){
+        printf("right");
+      }
+      if(M->moves[i] == 3){
+        printf("down");
+      }
+      if(M->moves[i] == 4){
+        printf("left");
+      }
+      if(M->moves[i + 1] != 0 || M->moves[i + 2] != 0){
+        printf(", ");
+      }
+    }
   }
-  if(M->moves[1] == 2){
-    direcoes = strcat(direcoes,"Right,");
-    //direcoes = direcoes + "Right,";
-  }
-  if(M->moves[2] == 3){
-    direcoes = strcat(direcoes,"Down,");
-   // direcoes += "Down,";
-  }
-  if(M->moves[3] == 4){
-    direcoes = strcat(direcoes,"Left,");
-    //direcoes += "Left,";
-  }
-  return direcoes;
+  printf(". \n");
 }
 
 void modifica_tipo(Action *m,char *buffer){
@@ -203,14 +226,11 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
   int *posicao = malloc(10*sizeof(int));
   int i = posi[0];
   int j = posi[1];
-  if(direcao->moves[2] == 3){ //down
-    printf("%i \n",M->board[i + 1][j]);     
+  if(direcao->moves[2] == 3){ //down     
     if(M->board[i + 1][j] == 3){
       M->board[i][j] = 1;
       M->type = 5;
       N->type = 5;
-    }
-    if(M->board[i + 1][j] == 0){           
     }
     if(M->board[i + 1][j] == 1){
       M->board[i + 1][j] = 5;
@@ -233,14 +253,11 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       N->type = 4;
     }           
   }
-  if(direcao->moves[1] == 2){ // right
-  printf("%i \n",M->board[i][j + 1]); 
+  if(direcao->moves[1] == 2){ // right 
     if(M->board[i][j + 1] == 3 || N->board[i][j + 1] == 3){
       M->board[i][j] = 1;
       M->type = 5;
       N->type = 5;
-    }
-    if(M->board[i][j + 1] == 0){
     }
     if(M->board[i][j + 1] == 1){
       M->board[i][j + 1] = 5;
@@ -266,13 +283,10 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
     }
   }
   if(direcao->moves[0] == 1){ //up
-  printf("%i \n",M->board[i - 1][j]); 
     if(M->board[i - 1][j] == 3){
       M->board[i][j] = 1;
       M->type = 5;
       N->type = 5;
-    }
-    if(M->board[i - 1][j] == 0){
     }
     if(M->board[i - 1][j] == 1){
       M->board[i - 1][j] = 5;
@@ -294,14 +308,11 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       N->type = 4;
     }
    }
-  if(direcao->moves[3] == 4){ // left
-  printf("%i \n",M->board[i][j - 1]); 
+  if(direcao->moves[3] == 4){ // left 
     if(M->board[i][j - 1] == 3){
       M->board[i][j] = 1;
       M->type = 5;
       N->type = 5;
-    }
-    if(M->board[i][j - 1] == 0){
     }
     if(M->board[i][j - 1] == 1){
       M->board[i][j - 1] = 5;
@@ -360,4 +371,23 @@ void Limpa_movimentos(Action *M){
   M->moves[1] = 0;
   M->moves[2] = 0;
   M->moves[3] = 0;
+  M->moves[4] = 0;
+  M->moves[5] = 0;
+}
+
+int verifica_moves(Action *manda,Action*recebido){
+  int aux;
+  for(int i = 0; i < 4; i++){
+    if(manda->moves[i] != 0){
+      aux = i;
+      break;
+    }
+  }
+
+  if(recebido->moves[aux] == manda->moves[aux]){
+    return 0;
+  }
+  else{
+    return 1;
+  }
 }
