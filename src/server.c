@@ -74,11 +74,11 @@ int main(int argc, char **argv) {
     int *posicao;
     while (1) {      
         inicializa_action(&res);
-        recv(csock, &res, sizeof(board), 0);
+        recv(csock, &res, sizeof(res), 0);
         
 		switch (res.type){
 			case 6:
-				Limpa_movimentos(&board);
+				Limpa_movimentos(&modificado);
 			case 0:
 				if(comeco == 0){
 					printf("[msg] Client connected\n");
@@ -92,8 +92,8 @@ int main(int argc, char **argv) {
 				pega_labirinto(&Colunas, &Linhas, &board ,nome_arquivo);
 				posicao = inicia_labiririntos(&board,&modificado);
 				direcoes_possiveis(&modificado, posicao);
-				send(csock, &modificado, sizeof(board), 0);
-				Limpa_movimentos(&board);
+				send(csock, &modificado, sizeof(modificado), 0);
+				Limpa_movimentos(&modificado);
 				break;
 			case 7:
 				printf("client disconnected");
@@ -101,11 +101,14 @@ int main(int argc, char **argv) {
 			case 1:
 				posicao = modifica_labirinto(&board,&modificado,&res,posicao);
 				direcoes_possiveis(&modificado,posicao);
-                send(csock, &modificado, sizeof(board), 0);
-				Limpa_movimentos(&board);
+                send(csock, &modificado, sizeof(modificado), 0);
+				Limpa_movimentos(&modificado);
 				break;
             case 2:
-                send(csock, &modificado, sizeof(board), 0);
+                send(csock, &modificado, sizeof(modificado), 0);
+                break;
+            case 5:
+                send(csock, &board, sizeof(board), 0);
                 break;
 			default:
 				break;

@@ -93,22 +93,42 @@ int *inicia_labiririntos(Action *M,Action *N){
 void direcoes_possiveis(Action *M, int *posi){
   int i = posi[0];
   int j = posi[1];
-  if(M->board[i - 1][j] == 1 || M->board[i - 1][j] == 2 || M->board[i - 1][j] == 3){ // up
+  if(M->board[i - 1][j] == 1 || M->board[i - 1][j] == 2){ // up
     M->moves[0] = 1;
     M->type = 4;
   }
-  if(M->board[i][j - 1] == 1 || M->board[i][j - 1] == 2 || M->board[i][j - 1] == 3){ // left
+  if(M->board[i - 1][j] == 3){ // up
+    M->moves[0] = 1;
+    M->type = 5;
+  }
+
+  if(M->board[i][j - 1] == 1 || M->board[i][j - 1] == 2){ // left
     M->moves[3] = 4;
     M->type = 4;
   }
-  if(M->board[i + 1][j] == 1 || M->board[i + 1][j] == 2 || M->board[i + 1][j] == 3){  //down
+   if(M->board[i][j - 1] == 3){ // left
+    M->moves[3] = 4;
+    M->type = 5;
+  }
+
+  if(M->board[i + 1][j] == 1 || M->board[i + 1][j] == 2){  //down
     M->moves[2] = 3;
     M->type = 4;
   }
-  if(M->board[i][j + 1] == 1 || M->board[i][j + 1] == 2 || M->board[i][j + 1] == 3){ //right
+  if(M->board[i + 1][j] == 3){  //down
+    M->moves[2] = 3;
+    M->type = 5;
+  }
+
+  if(M->board[i][j + 1] == 1 || M->board[i][j + 1] == 2){ //right
     M->moves[1] = 2;
     M->type = 4;
   }
+  if(M->board[i][j + 1] == 3){ //right
+    M->moves[1] = 2;
+    M->type = 5;
+  }
+  
 }
 
 char *print_direcoes_possiveis(Action *M){
@@ -183,10 +203,12 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
   int *posicao = malloc(10*sizeof(int));
   int i = posi[0];
   int j = posi[1];
-  if(direcao->moves[2] == 3){ //down     
+  if(direcao->moves[2] == 3){ //down
+    printf("%i \n",M->board[i + 1][j]);     
     if(M->board[i + 1][j] == 3){
-        M->board[i][j] = 1;
-        M->type = 5;
+      M->board[i][j] = 1;
+      M->type = 5;
+      N->type = 5;
     }
     if(M->board[i + 1][j] == 0){           
     }
@@ -208,12 +230,15 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       posicao[0] = i + 1;
       posicao[1] = j;
       M->type = 4;
+      N->type = 4;
     }           
   }
   if(direcao->moves[1] == 2){ // right
-    if(M->board[i][j + 1] == 3){
+  printf("%i \n",M->board[i][j + 1]); 
+    if(M->board[i][j + 1] == 3 || N->board[i][j + 1] == 3){
       M->board[i][j] = 1;
       M->type = 5;
+      N->type = 5;
     }
     if(M->board[i][j + 1] == 0){
     }
@@ -237,12 +262,15 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       posicao[0] = i;
       posicao[1] = j + 1;
       M->type = 4;
+      N->type = 4;
     }
   }
   if(direcao->moves[0] == 1){ //up
+  printf("%i \n",M->board[i - 1][j]); 
     if(M->board[i - 1][j] == 3){
       M->board[i][j] = 1;
       M->type = 5;
+      N->type = 5;
     }
     if(M->board[i - 1][j] == 0){
     }
@@ -263,12 +291,15 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       posicao[0] = i - 1;
       posicao[1] = j;
       M->type = 4;
+      N->type = 4;
     }
    }
   if(direcao->moves[3] == 4){ // left
+  printf("%i \n",M->board[i][j - 1]); 
     if(M->board[i][j - 1] == 3){
       M->board[i][j] = 1;
       M->type = 5;
+      N->type = 5;
     }
     if(M->board[i][j - 1] == 0){
     }
@@ -291,6 +322,7 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       posicao[0] = i;
       posicao[1] = j - 1;
       M->type = 4;
+      N->type = 4;
     }
   }
   return posicao;

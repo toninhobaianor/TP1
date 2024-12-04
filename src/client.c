@@ -61,7 +61,6 @@ int main(int argc, char **argv) {
 		printf("mensagem> ");
 		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
-	
 		//exit
 		switch(board.type){
 			case 6:
@@ -86,7 +85,9 @@ int main(int argc, char **argv) {
 					dir = print_direcoes_possiveis(&board);
 					printf("Possible moves: %s\n", dir);
 				}
-				else if(board.type == 5){
+				if(board.type == 5){
+					send(s, &board, sizeof(board), 0);
+					recv(s, &board, sizeof(board), 0);
 					printf("You escaped!");
 					Mostra_map(&board);
 					fim = 1;
