@@ -62,7 +62,6 @@ int main(int argc, char **argv) {
 		fgets(buf, BUFSZ, stdin);
 		modifica_tipo(&board,buf);
 	
-		//exit
 		switch(board.type){
 			case 1:
 				if(init == 0){
@@ -77,11 +76,13 @@ int main(int argc, char **argv) {
 					printf("error: you cannot go this way \n");
 					break;
 				}
+
 			case 6:
 				if(fim == 1){
 					board.type = 0;
 				}
 				fim = 0;
+
 			case 0:
 				init = 1;
 				if(fim == 1){
@@ -100,6 +101,7 @@ int main(int argc, char **argv) {
 					fim = 1;
 				}
 				break;
+
 			case 2:
 				if(init == 0){
 					printf("error: start the game first \n");
@@ -113,9 +115,12 @@ int main(int argc, char **argv) {
 			case 7:
 				send(s, &board, sizeof(board), 0);
 				exit(EXIT_SUCCESS);
+
+			case 10:
+				printf("error: command not found \n");
+				break;
 			
 			default:
-				printf("error: command not found \n");
 				break;
 		}
 	}

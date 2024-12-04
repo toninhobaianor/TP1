@@ -220,23 +220,21 @@ void modifica_tipo(Action *m,char *buffer){
   else if (strcmp(res,"reset") == 0) {
 		m->type = 6;	
 	}
+  else {
+    m->type = 10;
+  }
 }
 
-int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
+int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi, int init){
   int *posicao = malloc(10*sizeof(int));
   int i = posi[0];
   int j = posi[1];
-  if(direcao->moves[2] == 3){ //down     
-    if(M->board[i + 1][j] == 3){
-      M->board[i][j] = 1;
-      M->type = 5;
-      N->type = 5;
-    }
-    if(M->board[i + 1][j] == 1){
+  if(init == 1){
+    if(M->board[i + 1][j] == 1){ // down
       M->board[i + 1][j] = 5;
-      M->board[i][j] = 1;
+      M->board[i][j] = 2;
 
-      N->board[i][j] = 1;
+      N->board[i][j] = 2;
       N->board[i + 1][j] = 5;
 
       N->board[i + 1][j + 1] = M->board[i + 1][j + 1];
@@ -246,31 +244,22 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       N->board[i + 2][j] = M->board[i + 2][j];
       N->board[i + 2][j - 1] = M->board[i + 2][j - 1];
 
-
       posicao[0] = i + 1;
       posicao[1] = j;
       M->type = 4;
       N->type = 4;
-    }           
-  }
-  if(direcao->moves[1] == 2){ // right 
-    if(M->board[i][j + 1] == 3 || N->board[i][j + 1] == 3){
-      M->board[i][j] = 1;
-      M->type = 5;
-      N->type = 5;
     }
-    if(M->board[i][j + 1] == 1){
-      M->board[i][j + 1] = 5;
-      M->board[i][j] = 1;
 
-      N->board[i][j] = 1;
+    else if(M->board[i][j + 1] == 1){ // right
+      M->board[i][j + 1] = 5;
+      M->board[i][j] = 2;
+
+      N->board[i][j] = 2;
       N->board[i][j + 1] = 5;
       
       N->board[i + 1][j + 1] = M->board[i + 1][j + 1];
-      N->board[i + 1][j] = M->board[i + 1][j];
       N->board[i + 1][j + 2] = M->board[i + 1][j + 2];
   
-      N->board[i - 1][j] = M->board[i - 1][j];
       N->board[i - 1][j + 1] = M->board[i - 1][j + 1];
       N->board[i - 1][j + 2] = M->board[i - 1][j + 2];
 
@@ -281,18 +270,12 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       M->type = 4;
       N->type = 4;
     }
-  }
-  if(direcao->moves[0] == 1){ //up
-    if(M->board[i - 1][j] == 3){
-      M->board[i][j] = 1;
-      M->type = 5;
-      N->type = 5;
-    }
-    if(M->board[i - 1][j] == 1){
-      M->board[i - 1][j] = 5;
-      M->board[i][j] = 1;
 
-      N->board[i][j] = 1;
+    else if(M->board[i - 1][j] == 1){ // up
+      M->board[i - 1][j] = 5;
+      M->board[i][j] = 2;
+
+      N->board[i][j] = 2;
       N->board[i - 1][j] = 5;
   
       N->board[i - 1][j + 1] = M->board[i - 1][j + 1];
@@ -307,18 +290,12 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       M->type = 4;
       N->type = 4;
     }
-   }
-  if(direcao->moves[3] == 4){ // left 
-    if(M->board[i][j - 1] == 3){
-      M->board[i][j] = 1;
-      M->type = 5;
-      N->type = 5;
-    }
-    if(M->board[i][j - 1] == 1){
-      M->board[i][j - 1] = 5;
-      M->board[i][j] = 1;
 
-      N->board[i][j] = 1;
+    else if(M->board[i][j - 1] == 1){
+      M->board[i][j - 1] = 5;
+      M->board[i][j] = 2;
+
+      N->board[i][j] = 2;
       N->board[i][j - 1] = 5;
 
       N->board[i + 1][j - 1] = M->board[i + 1][j - 1];
@@ -335,12 +312,121 @@ int *modifica_labirinto(Action *M,Action *N,Action *direcao,int *posi){
       M->type = 4;
       N->type = 4;
     }
+    return posicao;  
   }
-  return posicao;
+  else{
+    if(direcao->moves[2] == 3){ //down     
+      if(M->board[i + 1][j] == 3){
+        M->board[i][j] = 1;
+        M->type = 5;
+        N->type = 5;
+      }
+      if(M->board[i + 1][j] == 1){
+        M->board[i + 1][j] = 5;
+        M->board[i][j] = 1;
+
+        N->board[i][j] = 1;
+        N->board[i + 1][j] = 5;
+
+        N->board[i + 1][j + 1] = M->board[i + 1][j + 1];
+        N->board[i + 1][j - 1] = M->board[i + 1][j - 1];
+    
+        N->board[i + 2][j + 1] = M->board[i + 2][j + 1];
+        N->board[i + 2][j] = M->board[i + 2][j];
+        N->board[i + 2][j - 1] = M->board[i + 2][j - 1];
+
+        posicao[0] = i + 1;
+        posicao[1] = j;
+        M->type = 4;
+        N->type = 4;
+      }           
+    }
+    else if(direcao->moves[1] == 2){ // right 
+      if(M->board[i][j + 1] == 3 || N->board[i][j + 1] == 3){
+        M->board[i][j] = 1;
+        M->type = 5;
+        N->type = 5;
+      }
+      if(M->board[i][j + 1] == 1){
+        M->board[i][j + 1] = 5;
+        M->board[i][j] = 1;
+
+        N->board[i][j] = 1;
+        N->board[i][j + 1] = 5;
+        
+        N->board[i + 1][j + 1] = M->board[i + 1][j + 1];
+        N->board[i + 1][j + 2] = M->board[i + 1][j + 2];
+    
+        N->board[i - 1][j + 1] = M->board[i - 1][j + 1];
+        N->board[i - 1][j + 2] = M->board[i - 1][j + 2];
+
+        N->board[i][j + 2] = M->board[i][j + 2];
+
+        posicao[0] = i;
+        posicao[1] = j + 1;
+        M->type = 4;
+        N->type = 4;
+      }
+    }
+    else if(direcao->moves[0] == 1){ //up
+      if(M->board[i - 1][j] == 3){
+        M->board[i][j] = 1;
+        M->type = 5;
+        N->type = 5;
+      }
+      if(M->board[i - 1][j] == 1){
+        M->board[i - 1][j] = 5;
+        M->board[i][j] = 1;
+
+        N->board[i][j] = 1;
+        N->board[i - 1][j] = 5;
+    
+        N->board[i - 1][j + 1] = M->board[i - 1][j + 1];
+        N->board[i - 1][j - 1] = M->board[i - 1][j - 1];
+
+        N->board[i - 2][j - 1] = M->board[i - 2][j - 1];
+        N->board[i - 2][j] = M->board[i - 2][j];
+        N->board[i - 2][j + 1] = M->board[i - 2][j + 1];
+
+        posicao[0] = i - 1;
+        posicao[1] = j;
+        M->type = 4;
+        N->type = 4;
+      }
+    }
+    else if(direcao->moves[3] == 4){ // left 
+      if(M->board[i][j - 1] == 3){
+        M->board[i][j] = 1;
+        M->type = 5;
+        N->type = 5;
+      }
+      if(M->board[i][j - 1] == 1){
+        M->board[i][j - 1] = 5;
+        M->board[i][j] = 1;
+
+        N->board[i][j] = 1;
+        N->board[i][j - 1] = 5;
+
+        N->board[i + 1][j - 1] = M->board[i + 1][j - 1];
+        N->board[i + 1][j - 2] = M->board[i + 1][j - 2];
+    
+        N->board[i - 1][j - 1] = M->board[i - 1][j - 1];
+        N->board[i - 1][j - 2] = M->board[i - 1][j - 2];
+
+        N->board[i][j + 1] = M->board[i][j + 1];
+        N->board[i][j - 2] = M->board[i][j - 2];
+
+        posicao[0] = i;
+        posicao[1] = j - 1;
+        M->type = 4;
+        N->type = 4;
+      }
+    }
+    return posicao;
+  }
 }
 
 void Mostra_map(Action *m){
-  printf("\n");
   for(int i = 0; i < 5; i++){
     for(int j = 0; j < 5; j++){
       if((m->board[i][j]) == 0){

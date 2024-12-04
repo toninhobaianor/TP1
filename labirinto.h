@@ -19,7 +19,7 @@ void Limpa_movimentos(Action *M);
 // função de consulta()
 int *inicia_labiririntos(Action *M,Action *N);
 void direcoes_possiveis(Action *M,int *posi);
-int *modifica_labirinto(Action *M, Action *N,Action *dir,int *posi);
+int *modifica_labirinto(Action *M, Action *N,Action *dir,int *posi,int init);
 int verifica_moves(Action *manda,Action*recebido);
 
 #endif

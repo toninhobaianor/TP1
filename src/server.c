@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
     addrtostr(caddr, caddrstr, BUFSZ);
 	int comeco = 0;
     int *posicao;
+    int init = 0;
     while (1) {      
         inicializa_action(&res);
         recv(csock, &res, sizeof(res), 0);
@@ -76,6 +77,7 @@ int main(int argc, char **argv) {
 		switch (res.type){
 			case 6:
 				Limpa_movimentos(&modificado);
+                init = 0;
 			case 0:
 				if(comeco == 0){
 					printf("[msg] Client connected\n");
@@ -96,8 +98,9 @@ int main(int argc, char **argv) {
 				printf("client disconnected \n");
                 exit(EXIT_SUCCESS);
 			case 1:
+                init++;
                 Limpa_movimentos(&modificado);
-				posicao = modifica_labirinto(&board,&modificado,&res,posicao);
+				posicao = modifica_labirinto(&board,&modificado,&res,posicao,init);
 				direcoes_possiveis(&modificado,posicao);
                 send(csock, &modificado, sizeof(modificado), 0);
 				Limpa_movimentos(&modificado);
