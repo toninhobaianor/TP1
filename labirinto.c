@@ -455,7 +455,7 @@ void Limpa_movimentos(Action *M){
   M->moves[5] = 0;
 }
 
-int verifica_moves(Action *manda,Action*recebido){
+int verifica_moves(Action *manda, int* recebido){
   int aux;
   for(int i = 0; i < 4; i++){
     if(manda->moves[i] != 0){
@@ -464,7 +464,7 @@ int verifica_moves(Action *manda,Action*recebido){
     }
   }
 
-  if(recebido->moves[aux] == manda->moves[aux]){
+  if(recebido[aux] == manda->moves[aux]){
     return 0;
   }
   else{

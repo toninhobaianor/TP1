@@ -54,9 +54,11 @@ int main(int argc, char **argv) {
 	memset(buf, 0, BUFSZ);
 	int init = 0;
 	int fim = 0;
+	int movimentos[6];
 	int aux;
 	while(1) {
 		inicializa_action(&board);
+		inicializa_action(&recebido);
 
 		printf("mensagem> ");
 		fgets(buf, BUFSZ, stdin);
@@ -72,7 +74,7 @@ int main(int argc, char **argv) {
 				if(fim == 1){
 					break;
 				}
-				aux = verifica_moves(&board,&recebido);
+				aux = verifica_moves(&board, movimentos);
 				if(aux == 1){
 					printf("error: you cannot go this way \n");
 					break;
@@ -93,6 +95,9 @@ int main(int argc, char **argv) {
 				recv(s, &recebido, sizeof(recebido), 0);
 				if(recebido.type == 4){
 					print_direcoes_possiveis(&recebido);
+					for(int i = 0; i < 4; i++){
+						movimentos[i] = recebido.moves[i];
+					}
 				}
 				if(recebido.type == 5){
 					send(s, &board, sizeof(board), 0);
@@ -109,8 +114,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				send(s, &board, sizeof(board), 0);
-				recv(s, &board, sizeof(board), 0);
-				Mostra_map(&board);
+				recv(s, &recebido, sizeof(recebido), 0);
+				Mostra_map(&recebido);
 				break;
 			
 			case 7:
